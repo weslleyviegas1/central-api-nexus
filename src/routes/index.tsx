@@ -313,7 +313,7 @@ function Index() {
   const [selected, setSelected] = useState<AppId>("fluxo");
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [enabled, setEnabled] = useState<Record<AppId, boolean>>({ fluxo: true, agenda: true, saas1: true, saas2: false, saas3: false });
-  const selectedApp = useMemo(() => apps.find((app) => app.id === selected) ?? apps[0], [selected]);
+  const selectedApp = useMemo(() => apps.find((app) => app.id === selected), [selected]);
   const choose = (id: AppId) => { setSelected(id); if (window.matchMedia("(max-width: 760px)").matches) setDetailsOpen(true); };
 
   return (
@@ -328,9 +328,11 @@ function Index() {
         <EcosystemMap selected={selected} onSelect={choose} enabled={enabled} setEnabled={setEnabled} />
         <MobileApps selected={selected} onSelect={choose} />
       </div>
-      <div className={cn("details-wrap", detailsOpen && "open")}>
-        <DetailsPanel app={selectedApp} enabled={enabled[selected]} onToggle={() => setEnabled((current) => ({ ...current, [selected]: !current[selected] }))} onClose={() => setDetailsOpen(false)} />
-      </div>
+      {selectedApp ? (
+        <div className={cn("details-wrap", detailsOpen && "open")}>
+          <DetailsPanel app={selectedApp} enabled={enabled[selected]} onToggle={() => setEnabled((current) => ({ ...current, [selected]: !current[selected] }))} onClose={() => setDetailsOpen(false)} />
+        </div>
+      ) : null}
     </main>
   );
 }
